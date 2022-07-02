@@ -29,8 +29,3 @@ $ ...
 # Stop services
 $ docker compose down
 ```
-
-### Testing
-```shell
-$ pytest
-```
