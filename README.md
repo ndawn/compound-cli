@@ -20,8 +20,8 @@ $ python -m compound show ADP
 
 ### Deployment
 ```shell
-# Start services (with environment variables included)
-$ docker compose up -d --env-file .env
+# Start services
+$ docker compose up -d
 # Run a shell inside CLI service
 $ docker exec -it compound_cli /bin/sh
 # After that you may run the CLI inside the shell
@@ -34,7 +34,3 @@ $ docker compose down
 ```shell
 $ pytest
 ```
-
-#
-#
-###### Does this count as OOP homework?
