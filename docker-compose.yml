@@ -1,0 +1,36 @@
+version: '3.1'
+
+networks:
+  wire:
+    driver: bridge
+
+services:
+
+  db:
+    container_name: compound_db
+    image: postgres
+    restart: always
+    volumes:
+      - ./db:/db
+    networks:
+      - wire
+    environment:
+      PGDATA: /db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+
+  cli:
+    container_name: compound_cli
+    build:
+      dockerfile: ./Dockerfile
+    stdin_open: true
+    tty: true
+    depends_on:
+      - db
+    networks:
+      - wire
+    environment:
+      API_URL: https://www.ebi.ac.uk/pdbe/graph-api/compound/summary/
+      DB_URL: postgresql://${DB_USER}:${DB_PASSWORD}@compound_db:5432/${DB_DATABASE}
+      VALUE_MAX_LENGTH: 10
