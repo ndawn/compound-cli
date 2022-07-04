@@ -43,9 +43,20 @@ def test_compound__invalid_arg(capsys, command):
     assert stdout.strip() == f'Unsupported compound type: SOME_INVALID_ARG'
 
 
-@pytest.mark.parametrize('populated_db', ['ATP', 'ADP', 'STI', '18W', '29P'], indirect=True)
-def test_compound_show__ok(capsys, populated_db):
-    populated_db, type_ = populated_db
+@pytest.mark.parametrize('type_', ['ATP', 'ADP', 'STI', '18W', '29P'])
+def test_compound_show__ok(capsys, db, type_):
+    db.add(
+        Compound(
+            name='test_name',
+            type=CompoundType(type_),
+            formula='test_formula',
+            inchi='test_inchi',
+            inchi_key='test_inchi_key',
+            smiles='test_smiles',
+            cross_links_count=123,
+        )
+    )
+    db.flush()
 
     main(['show', type_])
 
@@ -54,9 +65,9 @@ def test_compound_show__ok(capsys, populated_db):
 
     assert stdout == (
         'Total rows: 1\n'
-        '+---------------+--------------+------------+---------------+-------------+-------------------+\n'
-        '| Compound type | Formula      | InChI      | InChI key     | Smiles      | Cross links count |\n'
-        '+---------------+--------------+------------+---------------+-------------+-------------------+\n'
-        f'| {type_}           | test_formula | test_inchi | test_inchi... | test_smiles | 123               |\n'
-        '+---------------+--------------+------------+---------------+-------------+-------------------+'
+        '+-----------+------+--------------+------------+---------------+-------------+-------------------+\n'
+        '| Name      | Type | Formula      | InChI      | InChI key     | Smiles      | Cross links count |\n'
+        '+-----------+------+--------------+------------+---------------+-------------+-------------------+\n'
+        f'| test_name | {type_}  | test_formula | test_inchi | test_inchi... | test_smiles | 123               |\n'
+        '+-----------+------+--------------+------------+---------------+-------------+-------------------+'
     )
